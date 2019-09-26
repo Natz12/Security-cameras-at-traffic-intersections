@@ -9,7 +9,7 @@ import re
 import sys
 
 ####################################3
-verbose = False
+verbose = True
 trial_run = False
 
 # # Street
@@ -365,7 +365,8 @@ class Graph(object):
         # for i in range(0, len(keys)):
         #     self.db_segments[keys[i]] = []
         #     for j in range(i + 1, len(keys)):
-        for key, value in db.iteritems():
+        for key in db.keys():
+            value = db[key]
             self.db_segments[key] = [Segment()]
             for i in range(len(value) - 1):
                 point1 = Point(value[i][0], value[i][1])
@@ -380,7 +381,7 @@ class Graph(object):
         #     self.db_intersection[keys[i]].inter = []
         for i in range(0, len(keys)):
             if verbose is True:
-                (print("Length of keys: ", len(keys), "\nSegment: ", self.db_segments[keys[i]][1].segment))
+                (print("Length of keys: ", len(keys), "\nSegment: ", self.db_segments[keys[i]].segment))
             # self.db_segments[keys[i]].inter = []
             for j in range(1, len(self.db_segments[keys[i]])):
                 for k in range(i + 1, len(keys)):
@@ -651,9 +652,6 @@ def main(test=None):
             else:
                 raise Exception("Unknown command: The command should be one of the following options: "
                                 "c, a, r, or g")
-
-
-
 
     # return exit code 0 on successful termination
     sys.exit(0)
