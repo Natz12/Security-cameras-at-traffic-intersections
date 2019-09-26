@@ -9,8 +9,8 @@ import re
 import sys
 
 ####################################3
-verbose = True
-trial_run = True
+verbose = False
+trial_run = False
 
 # # Street
 # class Street(object):
@@ -24,6 +24,7 @@ trial_run = True
 #     def __str__(self):
 #         return repr(self)
 
+
 # ---PARSING (in: String, Out: 1-4)
 def parse_line(inline):
     sp = inline.strip().lower()
@@ -33,7 +34,7 @@ def parse_line(inline):
     # Checking command
     if command not in "acrga":
         raise Exception("Unknown command: The command should only be one of the following options: "
-                        "'c', 'a', 'r', or 'g '")
+                        "'c', 'a', 'r', or 'g'")
 
     # Parsing Street Name
 
@@ -45,7 +46,8 @@ def parse_line(inline):
         street_name = street_name[0][1:-1]
     else:
         if sp != 'g':
-            raise Exception("Invalid Input")
+            raise Exception("Invalid Input: The command should only be one of the following options: "
+                        "'c', 'a', 'r', or 'g '")
         else:
             return command, None, None
 
@@ -57,6 +59,11 @@ def parse_line(inline):
     coordinates = None
 
     if command == 'a' or command == 'c':
+        c = re.findall(r'^[ac][ ]+["][a-zA-Z ]+["][ ]+([(][-]?[0-9]+[,][-]?[0-9]+[)][ ]*)+$', sp)
+
+        if len(c) != 1:
+            raise Exception('Invalid Input: This command has errors. Check for especial characters')
+
         # Checking completeness
         if len(sp) < 16:
             raise Exception("Invalid Input: There is something missing, input is too short")
@@ -232,8 +239,13 @@ def intersect(l1, l2):
                 x_l2_max = max(x3, x4)
                 x_l2_min = min(x3, x4)
 
+                l1_max = max([(x1, y1), (x2, y2)])
+                l1_min = min([(x1, y1), (x2, y2)])
+                l2_max = max([(x3, y3), (x4, y4)])
+                l2_min = min([(x3, y3), (x4, y4)])
+
                 # Checking one is not the sub-segment of the other
-                if x_l1_max > x_l2_max and x_l1_min > x_l2_min:
+                if x_l1_max > x_l2_max and x_l2_max > x_l1_min and x_l1_min > x_l2_min:
                     # Checking if 2 points are the same
                     if x_l2_max == x_l1_min:
                         inters.append(Point(x_l1_min, m * x_l1_min + b))
@@ -241,28 +253,26 @@ def intersect(l1, l2):
                         inters.append(Point(x_l2_max, m * x_l2_max + b))
                         inters.append(Point(x_l1_min, m * x_l1_min + b))
                 # Checking one is not the sub-segment of the other
-                elif x_l2_max > x_l1_max and x_l2_min > x_l1_min:
+                elif x_l2_max > x_l1_max and x_l1_max > x_l2_min and x_l2_min > x_l1_min:
                     # Checking if 2 points are the same
                     if x_l2_min == x_l1_max:
                         inters.append(Point(x_l1_max, m * x_l1_max + b))
                     else:
                         inters.append(Point(x_l1_max, m * x_l1_max + b))
                         inters.append(Point(x_l2_min, m * x_l2_min + b))
-                else:
+
                 ###### If sub-segments are accepted
+                elif l1_max[0] > l2_max[0] and l1_min[0] < l2_min[0]:
+                    inters.append(Point(l2_max[0], l2_max[1]))
+                    inters.append(Point(l2_min[0], l2_min[1]))
 
-                    l1_max = max([(x1, y1), (x2, y2)])
-                    l1_min = min([(x1, y1), (x2, y2)])
-                    l2_max = max([(x3, y3), (x4, y4)])
-                    l2_min = min([(x3, y3), (x4, y4)])
+                elif l1_max[0] < l2_max[0] and l1_min[0] > l2_min[0]:
+                    inters.append(Point(l1_max[0], l1_max[1]))
+                    inters.append(Point(l1_min[0], l1_min[1]))
 
-                    sor = sorted([l1_max, l1_min, l2_max, l2_min], key=lambda element: (element[0], element[1]))
-                    inters.append(Point(sor[1][0], sor[1][1]))
-                    inters.append(Point(sor[2][0], sor[2][1]))
-                    print("j")
-
-
-
+                    # sor = sorted([l1_max, l1_min, l2_max, l2_min], key=lambda element: (element[0], element[1]))
+                    # inters.append(Point(sor[1][0], sor[1][1]))
+                    # inters.append(Point(sor[2][0], sor[2][1]))
 
         # This lines are vertical
         else:
@@ -278,8 +288,13 @@ def intersect(l1, l2):
                 # y_l2_max = max(y3, y4)
                 # y_l2_min = min(y3, y4)
 
+                l1_max = max([(x1, y1), (x2, y2)])
+                l1_min = min([(x1, y1), (x2, y2)])
+                l2_max = max([(x3, y3), (x4, y4)])
+                l2_min = min([(x3, y3), (x4, y4)])
+
                 # Checking one is not the sub-segment of the other
-                if l1_max[1] > l2_max[1] and l1_min[1] > l2_min[1]:
+                if l1_max[1] > l2_max[1] and l2_max[1] > l1_min[1] and l1_min[1] > l2_min[1]:
                     # Checking if 2 points are the same
                     if l2_max[1] == l1_min[1]:
                         inters.append(Point(l1_min[0], l1_min[1]))
@@ -287,13 +302,28 @@ def intersect(l1, l2):
                         inters.append(Point((l2_max[0]), l2_max[1]))
                         inters.append(Point((l1_min[0]), l1_min[1]))
                 # Checking one is not the sub-segment of the other
-                elif l2_max[1] > l1_max[1] and l2_min[1] > l1_min[1]:
+                elif l2_max[1] > l1_max[1] and l1_max[1] > l2_min[1] and l2_min[1] > l1_min[1]:
                     # Checking if 2 points are the same
                     if l2_min[1] == l1_max[1]:
                         inters.append(Point(l1_max[0], l1_max[1]))
                     else:
                         inters.append(Point(l1_max[0], l1_max[1]))
                         inters.append(Point(l2_min[0], l2_min[1]))
+                # else:
+                ###### If sub-segments are accepted
+                elif l1_max[0] > l2_max[0] and l1_min[0] < l2_min[0]:
+                    inters.append(Point(l2_max[0], l2_max[1]))
+                    inters.append(Point(l2_min[0], l2_min[1]))
+
+                elif l1_max[0] < l2_max[0] and l1_min[0] > l2_min[0]:
+                    inters.append(Point(l1_max[0], l1_max[1]))
+                    inters.append(Point(l1_min[0], l1_min[1]))
+
+
+
+                    # sor = sorted([l1_max, l1_min, l2_max, l2_min], key=lambda element: (element[0], element[1]))
+                    # inters.append(Point(sor[1][0], sor[1][1]))
+                    # inters.append(Point(sor[2][0], sor[2][1]))
     return inters
 
 
@@ -369,14 +399,14 @@ class Graph(object):
 
                         if verbose is True:
                             if intersection != []:
-                                print("intersection: ", self.db_segments[keys[i]][j].inter, " and ", self.db_segments[keys[k]][l].inter)
+                                print("intersection: ", self.db_segments[keys[i]][j].inter, " and ",
+                                      self.db_segments[keys[k]][l].inter)
                                 if len(self.db_segments[keys[i]][j].inter) > 2:
                                     print("In db_segments I have a dictionaty of segments that contain lines and "
                                           "inter that has a list and inside another list with size 1 and inside a "
                                           "point of type", type(self.db_segments[keys[i]][j].inter[2][0].x))
                             else:
                                 print("No intersection", self.db_segments[keys[i]][j].inter)
-        print("j")
 
 
                         # despues de hallar la interseccion, aprovechar y tomar el nodo antes y el nodo despues para
@@ -397,20 +427,20 @@ class Graph(object):
 # ---GRAPH---
 class GraphBuilder(object):
 
-    def __init__(self, graph=None, vertex=None, edge=None):
+    def __init__(self, graph=None, vertex=None, edge_graph=None):
         if graph is None:
             graph = []
         self.graph = graph
         if vertex is None:
             vertex = {}
-        if edge is None:
-            edge = []
+        if edge_graph is None:
+            edge_graph = []
 
         self.vertex = vertex
-        self.edge = edge
+        self.edge_graph = edge_graph
 
     def __repr__(self):
-        return '({} {})'.format(self.vertex, self.edge)
+        return '({} {})'.format(self.vertex, self.edge_graph)
 
     def __str__(self):
         return repr(self)
@@ -420,50 +450,126 @@ class GraphBuilder(object):
             print("entering db_vertices ", type(self.graph.db_segments))
             y = self.graph.db_segments
         key_dict = self.graph.db_segments.keys()
-        edges = []
+
         for key in key_dict:
             value = self.graph.db_segments[key]
+
             # print("graph.db_segments", self.graph.db_segments)
             # print("graph.db_segments", self.graph.db_segments[key])
-            # if verbose is True:
-            #     print("key: ", key, " value: ", value, " len(value): ", len(value))
+            if verbose is True:
+                print("key: ", key, " value: ", value, " len(value): ", len(value))
 
             for i in range(len(value)-1):
+                edges_segment = []
                 j = i + 1
                 if value[j] is not []:
                     if len(value[j].inter) > 0:
-                        edges.append((round(value[j].segment.src.x, 2), round(value[j].segment.src.y, 2)))
-                        edges.append((round(value[j].segment.dst.x, 2), round(value[j].segment.dst.y, 2)))
+                        edges_segment.append((round(value[j].segment.src.x, 2), round(value[j].segment.src.y, 2)))
+                        edges_segment.append((round(value[j].segment.dst.x, 2), round(value[j].segment.dst.y, 2)))
 
-                        for k in range(len(value[j].inter[0])):
-                            print(value[j].segment.src.x)
-                            self.vertex[str(round(value[j].segment.src.x, 2)) + "," + str(round(value[j].segment.src.y, 2))] = value[j].segment.src
-                            self.vertex[str(round(value[j].segment.dst.x, 2)) + "," + str(round(value[j].segment.dst.y, 2))] = value[j].segment.dst
-                            self.vertex[str(round(value[j].inter[0][k].x, 2)) + "," + str(round(value[j].inter[0][k].y, 2))] = value[j].inter[0][k]
-                            edges.append((round(value[j].inter[0][k].x, 2), round(value[j].inter[0][k].y, 2)))
+                        # temmp = len(value[j].inter)
+                        # temp = value[j].inter
+                        # tempinside = value[j].inter[0]
+                        for k in range(len(value[j].inter)):
+                            # print(value[j].segment.src.x)
+                            for l in range(len(value[j].inter[k])):
+                                # tempinter = value[j].inter[k][l]
+                                self.vertex[str(round(value[j].segment.src.x, 2)) + "," + str(round(value[j].segment.src.y, 2))] = value[j].segment.src
+                                self.vertex[str(round(value[j].segment.dst.x, 2)) + "," + str(round(value[j].segment.dst.y, 2))] = value[j].segment.dst
+                                self.vertex[str(round(value[j].inter[k][l].x, 2)) + "," + str(round(value[j].inter[k][l].y, 2))] = value[j].inter[k][l]
+                                edges_segment.append((round(value[j].inter[k][l].x, 2), round(value[j].inter[k][l].y, 2)))
 
-        edges = sorted(list(set(edges)), key=lambda element:(element[0], element[1]))
-        for ed in range(len(edges)-1):
-            print(str(edges[ed][0])+str(edges[ed][1])+str(0)+str(edges[ed+1][0])+str(edges[ed+1][1]))
-            self.edge.append(str(edges[ed][0])+str(edges[ed][1])+str(0)+str(edges[ed+1][0])+str(edges[ed+1][1]))
-        print("j")
-
-
+                        edges_segment = sorted(list(set(edges_segment)), key=lambda element:(element[0], element[1]))
+                        # tempedge = edges_segment
+                        for ed in range(len(edges_segment)-1):
+                            self.edge_graph.append(((edges_segment[ed][0], edges_segment[ed][1]),
+                                                    (edges_segment[ed + 1][0], edges_segment[ed + 1][1])))
+                            self.edge_graph = list(set(self.edge_graph))
+                            if verbose is True:
+                                print("edge: ", [(edges_segment[ed][0], edges_segment[ed][1]), (edges_segment[ed + 1][0], edges_segment[ed + 1][1])])
+                    # for ed in range(len(edges)-1):
+                    #     print(str(edges[ed][0])+str(edges[ed][1])+str(0)+str(edges[ed+1][0])+str(edges[ed+1][1]))
+                    #     self.edge.append(str(edges[ed][0])+str(edges[ed][1])+str(0)+str(edges[ed+1][0])+str(edges[ed+1][1]))
+        if verbose is True:
+            print("edge_graph: ", self.edge_graph)
 
 
 # ---GRAPH PRINTER---
+def print_graph(built_graph):
+
+    # Vertices
+    vertices = sorted(built_graph.vertex.keys())
+    # vertices_temp = sorted(built_graph.vertex.values())
+    # ver = filter(lambda ch: ch not in " ?.!/;:,", vertices[0])
+
+    if verbose is True:
+        print("vertices in print_graph: ", vertices)
+        # print(ver)
+
+    ver_dic = {}
+    for i in range(len(vertices)):
+        ver = filter(lambda ch: ch not in " ?.!/;:,", vertices[i])
+        ver_dic[(built_graph.vertex[vertices[i]].x, built_graph.vertex[vertices[i]].y)] = i
+
+    sys.stdout.write('V = {\n')
+
+    ## This works to print the vertices
+    # for key in ver_dic.keys():
+    #     if verbose is True:
+    #         print
+    #         print("key: ", key, " value: ", ver_dic[key])
+    #
+    #     sys.stdout.write("\t" + str(ver_dic[key]) + ":" + "\t" + str(key) + "\n")
+    # sys.stdout.write('}\n')
+
+    ver = []
+    for key in ver_dic.keys():
+        if verbose is True:
+            print("key: ", key, " value: ", ver_dic[key])
+
+        ver.append(str(ver_dic[key]) + ":" + " " + str(key))
+
+    ver = sorted(ver)
+    for i in range(len(ver)):
+        sys.stdout.write(" " + ver[i] + "\n")
+    sys.stdout.write('}\n')
+
+    # edges
+    edges = built_graph.edge_graph
+    if verbose is True:
+        print("edges in print_graph: ", edges)
+
+    sys.stdout.write('E = {\n')
+    temp = ver_dic
+    temmp = type(edges)
+    for i in range(len(edges)):
+        sys.stdout.write('\t<'+ str(ver_dic[edges[i][0]]) + "," + str(ver_dic[edges[i][1]]) + ">\n")
+    sys.stdout.write('}\n')
+
+
+
+
+
+
+
+
 
 # ---MAIN()---
 
 
-def main():
+def main(test=None):
     # sample code to read from stdin.
     # make sure to remove all spurious print statements as required
     # by the assignment
     street_db = StreetDb({})
     if trial_run is False:
         while True:
-            line = sys.stdin.readline()
+
+            if test is None:
+                line = sys.stdin.readline()
+            else:
+                line = test
+
             if line == '':
                 if verbose is True:
                     print("exiting")
@@ -491,8 +597,9 @@ def main():
                     g = Graph()
                     Graph.calc_segments(g, street_db.db)
                     Graph.calc_intersection(g)
-                    graph_built = GraphBuilder(graph = g)
+                    graph_built = GraphBuilder(graph=g)
                     GraphBuilder.db_vertices(graph_built)
+                    print_graph(graph_built)
                 else:
                     raise Exception("Unknown command: The command should be one of the following options: "
                                     "c, a, r, or g")
@@ -503,8 +610,14 @@ def main():
 
 
 
+
     if trial_run is True:
         while True:
+            if test is None:
+                line = sys.stdin.readline()
+            else:
+                line = test
+
             line = sys.stdin.readline()
             if line == '':
                 if verbose is True:
@@ -534,10 +647,10 @@ def main():
                 Graph.calc_intersection(g)
                 graph_built = GraphBuilder(graph=g)
                 GraphBuilder.db_vertices(graph_built)
+                print_graph(graph_built)
             else:
                 raise Exception("Unknown command: The command should be one of the following options: "
                                 "c, a, r, or g")
-
 
 
 
