@@ -9,7 +9,7 @@ import re
 import sys
 
 ####################################3
-verbose = True
+verbose = False
 trial_run = False
 
 # # Street
@@ -27,7 +27,7 @@ trial_run = False
 
 # ---PARSING (in: String, Out: 1-4)
 def parse_line(inline):
-    sp = inline.strip().lower()
+    sp = inline
     # Extracting command
     command = sp[0]
 
@@ -43,7 +43,7 @@ def parse_line(inline):
         if len(street_name) != 1:
             raise Exception('Invalid Input: Remember to add exactly one "Street Name" within quotation '
                             'marks and without special characters')
-        street_name = street_name[0][1:-1]
+        street_name = street_name[0][1:-1].lower()
     else:
         if sp != 'g':
             raise Exception("Invalid Input: The command should only be one of the following options: "
@@ -59,10 +59,6 @@ def parse_line(inline):
     coordinates = None
 
     if command == 'a' or command == 'c':
-        c = re.findall(r'^[ac][ ]+["][a-zA-Z ]+["][ ]+([(][-]?[0-9]+[,][-]?[0-9]+[)][ ]*)+$', sp)
-
-        if len(c) != 1:
-            raise Exception('Invalid Input: This command has errors. Check for especial characters')
 
         # Checking completeness
         if len(sp) < 16:
@@ -84,6 +80,11 @@ def parse_line(inline):
         if len(coordinates_found) != closing:
             raise Exception("Invalid Input: remember to add valid coordinates between an opening "
                             "and a closing parentheses")
+        line_format = re.findall(r'^[ac][ ]+["][a-zA-Z ]+["][ ]+([(][-]?[0-9]+[,][-]?[0-9]+[)][ ]*)+$', sp)
+
+        if len(line_format) != 1:
+            raise Exception('Invalid Input: This command has errors. Check for especial characters')
+
 
         # Formatting coordinates_found
         coordinates_found_array = []
@@ -380,8 +381,6 @@ class Graph(object):
         # for i in keys:
         #     self.db_intersection[keys[i]].inter = []
         for i in range(0, len(keys)):
-            if verbose is True:
-                (print("Length of keys: ", len(keys), "\nSegment: ", self.db_segments[keys[i]].segment))
             # self.db_segments[keys[i]].inter = []
             for j in range(1, len(self.db_segments[keys[i]])):
                 for k in range(i + 1, len(keys)):
@@ -619,7 +618,7 @@ def main(test=None):
             else:
                 line = test
 
-            line = sys.stdin.readline()
+            # line = sys.stdin.readline()
             if line == '':
                 if verbose is True:
                     print("exiting")
