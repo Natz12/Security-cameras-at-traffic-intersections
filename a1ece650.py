@@ -245,7 +245,7 @@ def intersect(l1, l2):
                 l2_min = min([(x3, y3), (x4, y4)])
 
                 # Checking one is not the sub-segment of the other
-                if x_l1_max > x_l2_max and x_l2_max > x_l1_min and x_l1_min > x_l2_min:
+                if x_l1_max > x_l2_max and x_l2_max >= x_l1_min and x_l1_min > x_l2_min:
                     # Checking if 2 points are the same
                     if x_l2_max == x_l1_min:
                         inters.append(Point(x_l1_min, m * x_l1_min + b))
@@ -253,7 +253,7 @@ def intersect(l1, l2):
                         inters.append(Point(x_l2_max, m * x_l2_max + b))
                         inters.append(Point(x_l1_min, m * x_l1_min + b))
                 # Checking one is not the sub-segment of the other
-                elif x_l2_max > x_l1_max and x_l1_max > x_l2_min and x_l2_min > x_l1_min:
+                elif x_l2_max > x_l1_max and x_l1_max >= x_l2_min and x_l2_min > x_l1_min:
                     # Checking if 2 points are the same
                     if x_l2_min == x_l1_max:
                         inters.append(Point(x_l1_max, m * x_l1_max + b))
@@ -294,7 +294,7 @@ def intersect(l1, l2):
                 l2_min = min([(x3, y3), (x4, y4)])
 
                 # Checking one is not the sub-segment of the other
-                if l1_max[1] > l2_max[1] and l2_max[1] > l1_min[1] and l1_min[1] > l2_min[1]:
+                if l1_max[1] > l2_max[1] and l2_max[1] >= l1_min[1] and l1_min[1] > l2_min[1]:
                     # Checking if 2 points are the same
                     if l2_max[1] == l1_min[1]:
                         inters.append(Point(l1_min[0], l1_min[1]))
@@ -302,7 +302,7 @@ def intersect(l1, l2):
                         inters.append(Point((l2_max[0]), l2_max[1]))
                         inters.append(Point((l1_min[0]), l1_min[1]))
                 # Checking one is not the sub-segment of the other
-                elif l2_max[1] > l1_max[1] and l1_max[1] > l2_min[1] and l2_min[1] > l1_min[1]:
+                elif l2_max[1] > l1_max[1] and l1_max[1] >= l2_min[1] and l2_min[1] > l1_min[1]:
                     # Checking if 2 points are the same
                     if l2_min[1] == l1_max[1]:
                         inters.append(Point(l1_max[0], l1_max[1]))
