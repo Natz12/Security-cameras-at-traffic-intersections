@@ -69,7 +69,7 @@ def parse_line(inline):
         # Checking that at least 2 coordinates were entered
         coordinates_found = re.findall(r'[(][ ]*[-]?[ ]*[0-9]+[ ]*[,][ ]*[-]?[ ]*[0-9]+[ ]*[)]', sp)
         if len(coordinates_found) < 2:
-            raise Exception('Invalid Input: at least 2 coordinates must be entered')
+            raise Exception('Invalid Input: at least 2 valid coordinates must be entered')
 
         # checking that the # of opening parentheses = # of closing parentheses = # of coordinates found
         opening = sp.count('(')
@@ -312,11 +312,11 @@ def intersect(l1, l2):
                         inters.append(Point(l2_min[0], l2_min[1]))
                 # else:
                 ###### If sub-segments are accepted
-                elif l1_max[0] > l2_max[0] and l1_min[0] < l2_min[0]:
+                elif l1_max[1] > l2_max[1] and l1_min[1] < l2_min[1]:
                     inters.append(Point(l2_max[0], l2_max[1]))
                     inters.append(Point(l2_min[0], l2_min[1]))
 
-                elif l1_max[0] < l2_max[0] and l1_min[0] > l2_min[0]:
+                elif l1_max[1] < l2_max[1] and l1_min[1] > l2_min[1]:
                     inters.append(Point(l1_max[0], l1_max[1]))
                     inters.append(Point(l1_min[0], l1_min[1]))
 
