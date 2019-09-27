@@ -45,7 +45,7 @@ def parse_line(inline):
                             'marks and without special characters')
         street_name = street_name[0][1:-1].lower()
     else:
-        if sp != 'g':
+        if sp != 'g\n':
             raise Exception("Invalid Input: The command should only be one of the following options: "
                         "'c', 'a', 'r', or 'g '")
         else:
@@ -527,11 +527,11 @@ def print_graph(built_graph):
         if verbose is True:
             print("key: ", key, " value: ", ver_dic[key])
 
-        ver.append(str(ver_dic[key]) + ":" + " " + str(key))
+        ver.append(str(ver_dic[key]) + ":" + "  " + str(key))
 
     ver = sorted(ver)
     for i in range(len(ver)):
-        sys.stdout.write(" " + ver[i] + "\n")
+        sys.stdout.write("  " + ver[i] + "\n")
     sys.stdout.write('}\n')
 
     # edges
@@ -539,24 +539,17 @@ def print_graph(built_graph):
     if verbose is True:
         print("edges in print_graph: ", edges)
 
-    sys.stdout.write('E = {\n')
+    sys.stdout.write('E = {  ' + '\n')
     temp = ver_dic
     temmp = type(edges)
-    for i in range(len(edges)):
-        sys.stdout.write('\t<'+ str(ver_dic[edges[i][0]]) + "," + str(ver_dic[edges[i][1]]) + ">\n")
+    for i in range(len(edges)-1):
+        sys.stdout.write('  <' + str(ver_dic[edges[i][0]]) + "," + str(ver_dic[edges[i][1]]) + ">,\n")
+    if len(edges)>=1:
+        sys.stdout.write('  <' + str(ver_dic[edges[len(edges)-1][0]]) + "," + str(ver_dic[edges[len(edges)-1][1]]) + ">\n")
     sys.stdout.write('}\n')
 
 
-
-
-
-
-
-
-
 # ---MAIN()---
-
-
 def main(test=None):
     # sample code to read from stdin.
     # make sure to remove all spurious print statements as required
