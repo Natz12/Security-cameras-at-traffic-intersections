@@ -6,7 +6,6 @@
 #include <sstream>
 #include <vector>
 
-
 #include "a2ece650.hpp"
 
 bool verbose2 = false;
