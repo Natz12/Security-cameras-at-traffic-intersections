@@ -10,6 +10,6 @@ set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*, -fuchsia-default-arguments, -goo
 
 # create the main executable
 ## add additional .cpp files if needed
-add_executable(a2ece650 ece650-a2.cpp parse_line.cpp graph.cpp)
+add_executable(ece650-a2 a2-ece650.cpp parse_line.cpp graph.cpp)
 
 
