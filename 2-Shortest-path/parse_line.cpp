@@ -1,39 +1,75 @@
-#pragma once
+
 #include <iostream>
+#include <list>
 #include <sstream>
 #include <string>
+#include <vector>
+
 
 #include "a2ece650.hpp"
-bool verbose1 = true;
+bool verbose1 = false;
 
-std::string replace_substring (std::string str, std::string to_find, std::string to_replace) {
-    // From https://stackoverflow.com/a/4643526
-    size_t index = 0;
-    int size_to_find = to_find.length();
+// std::string replace_substring (std::string str, std::string to_find, std::string to_replace) {
+//     // From https://stackoverflow.com/a/4643526
+//     size_t index = 0;
+//     int size_to_find = to_find.length();
 
-    while (true) {
-        // Locating the substring to replace
+//     while (true) {
+//         // Locating the substring to replace
 
-        index = str.find(to_find, index);
-        if (index == std::string::npos) {
+//         index = str.find(to_find, index);
+//         if (index == std::string::npos) {
 
-            break;
+//             break;
+//         }
+//         // Replacing the "," for space
+//         str.replace(index, size_to_find, to_replace);
+//         //Advance the index forward
+//         index++;
+//     }
+//     return str;
+// }
+
+bool parse_num (std::istringstream &input, std::list<unsigned> &nums){
+    unsigned num;
+    input >> num;
+    if (input.fail()) {
+        // std::cout << "Error: parsing a number" << num << std::endl;
+        return false;
+    } else{
+        nums.push_back(num);
+        if (verbose1) {
+            std::cout << num << std::endl;
         }
-        // Replacing the "," for space
-        str.replace(index, size_to_find, to_replace);
-        //Advance the index forward
-        index++;
+        return true;
     }
-    return str;
+
+}
+
+bool parse_char (std::istringstream &input, char ch, char ch2 = '}'){
+    char c;
+    input >> c;
+    if (!input.eof()){
+        if (input.fail()) {
+            // std::cout << "Error: parsing char" << ch << std::endl;
+            return false;
+        } else {
+            if (c == ch || c == ch2){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    } else { return false; }
 }
 
 bool parse_line (const std::string &line,
-                 char &cmd, std::string &arg, std::string &err_msg) {
+                 char &cmd, std::list<unsigned> &nums, std::string &err_msg) {
 
     std::istringstream input(line);
 
     // remove whitespace
-    std::ws(input);
+    //std::ws(input);
 
     // Check for empty command
     if (input.eof()) {
@@ -54,21 +90,26 @@ bool parse_line (const std::string &line,
     if (ch == 'V') {
         // remove whitespace
         std::ws(input);
-        int num;
+        unsigned num;
         input >> num;
         if (input.fail()) {
             err_msg = "Missing or bad argument for V";
             return false;
         }
-        ws(input);
+        std::ws(input);
         if (!input.eof()) {
             err_msg = "Unexpected argument for V";
             return false;
         }
         cmd = ch;
-        arg = std::to_string(num);
+        nums.push_back(num);
+        // arg = std::to_string(num);
         if (verbose1){
-            std::cout << "\nYour character: " << cmd << "\nYour arguments: " << arg << std::endl;
+            std::cout << "\nYour character: " << cmd << "\nYour arguments: ";
+            for (int i : nums) {
+                std::cout << i << " ";
+            }
+            std::cout << std::endl;
         }
         return true;
     }
@@ -76,24 +117,104 @@ bool parse_line (const std::string &line,
     else if (ch == 'E') {
         // remove whitespace
         std::ws(input);
-        std::string vertices;
-        input >> vertices;
-        if (input.fail()) {
-            err_msg = "Missing or bad argument for E";
+
+        // std::string vertice = "";
+        // input >> vertices;
+
+
+        // std::stringstream input;
+            
+        // input << arg;
+        const char curly_open = '{';
+        const char curly_close = '}';
+        const char comma = ',';
+        const char angle_open = '<';
+        const char angle_close = '>';
+        // char c;
+        
+        // input >> c;
+
+        // std::cout << c << std::endl;
+
+        if (!parse_char(input, curly_open)) {
+            err_msg = "Missing or bad argument for E. {";
             return false;
         }
+
+        while (!input.eof()) {
+            if (parse_char(input, angle_open)){
+                // parse an integer
+                if (parse_num(input, nums)) {
+
+                    if (parse_char(input, comma)) {
+
+                        if (parse_num(input, nums)) {
+
+                            if (parse_char(input, angle_close)){
+                                
+                                if (!parse_char(input, comma, curly_close)){
+                                    // if (input.eof()){
+                                    //     break;
+                                    // }
+                                    // else { 
+                                        err_msg = "Missing or bad argument for E. ,2";
+                                        return false;
+                                }
+                            } else {
+                            err_msg = "Missing or bad argument for E. >";
+
+                            return false;
+                            break;
+                            }
+                        } else {
+                        err_msg = "Missing or bad argument for E. #";
+
+                        return false;
+                        break;
+                        }
+                    } else {
+                    err_msg = "Missing or bad argument for E. ,";
+
+                    return false;
+                    break;
+                    }
+                } else {
+                err_msg = "Missing or bad argument for E. #";
+
+                return false;
+                break;
+                }
+            } else {
+                // if eof bail out
+                if (input.eof()){
+                    break;
+                }
+                err_msg = "Missing or bad argument for E. <";
+
+                return false;
+                   break;
+                
+            }
+            
+        //    std::cout << std::to_string(nums) << endl;
+        }
+
         ws(input);
         if (!input.eof()) {
-            err_msg = "Unexpected argument for E";
+            err_msg = "Missing, bad or unexpected argument for E";
             return false;
         }
         cmd = ch;
-        arg = vertices;
-        arg = replace_substring(arg, ",", " ");
-        arg = replace_substring(arg, "<", " ");
-        arg = replace_substring(arg, ">", " ");
+        // arg = vertices;
+        // arg = replace_substring(arg, ",", " ");
+        // arg = replace_substring(arg, "<", " ");
+        // arg = replace_substring(arg, ">", " ");
         if (verbose1){
-            std::cout << "\nYour character: " << cmd << "\nYour arguments: " << arg << std::endl;
+            std::cout << "Your character: " << cmd << "\nYour arguments: ";
+            for (unsigned i : nums) {
+                std::cout << i << " ";
+            }
+            std::cout << std::endl;
         }
         return true;
     }
@@ -101,42 +222,60 @@ bool parse_line (const std::string &line,
     else if (ch == 's') {
         // remove whitespace
         // std::ws(input);
-        int vert;
+        unsigned num;
         // 
-        input >> vert;
+        input >> num;
 
         if (input.fail()) {
             err_msg = "Missing or bad argument for s";
             return false;
         }
 
-        std::string vertices = std::to_string(vert);
+        nums.push_back(num);
+        
         
 
-        input >> vert;
+        input >> num;
         
         if (input.fail()) {
             err_msg = "Missing or bad argument for s";
             return false;
         }
-        vertices.append(" ");
-        vertices.append(std::to_string(vert));
+        nums.push_back(num);
+
         ws(input);
         if (!input.eof()) {
             err_msg = "Unexpected argument for s";
             return false;
         }
         cmd = ch;
-        arg = vertices;
 
         if (verbose1){
-            std::cout << "\nYour character: " << cmd << "\nYour arguments: " << arg << std::endl;
+            std::cout << "Your character: " << cmd << "\nYour arguments: ";
+            for (unsigned i : nums) {
+                std::cout << i << " ";
+            }
+            std::cout << std::endl;
         }
         return true;
-    }
-    else {
+    } else {
         err_msg = "Unknown command";
         return false;
     }
+
+}
+
+bool print_short_path (std::list<unsigned> short_path) {
+
+    for (unsigned i : short_path){
+        if (i != short_path.back()){
+            std::cout << i << "-";
+        } else {
+            std::cout << i;
+        }
+
+    }
+    std::cout << std::endl;
+    return true;
 
 }
