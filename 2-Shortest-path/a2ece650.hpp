@@ -1,6 +1,5 @@
 #pragma once
 
-
 /// Graph class. Keeps track of one value
 class Graph
 {
@@ -24,12 +23,6 @@ public:
     bool adjacency_matrix(std::string &err_msg);
     /// Calculates the shortest path
     bool dijkstra( std::list<unsigned> coordinates, std::list<unsigned> &short_path, std::string &err_msg);
-    /// Adds v to the current value
-    void add(int v);
-    /// Subtracts v from the current value
-    void sub(int v);
-    /// Resets the current value to 0
-    void reset();
 };
 
 /**

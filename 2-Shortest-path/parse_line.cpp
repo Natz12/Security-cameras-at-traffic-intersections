@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 #include "a2ece650.hpp"
 bool verbose1 = false;
 

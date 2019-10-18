@@ -1,6 +1,5 @@
 /** Main file */
 
-
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -15,15 +14,19 @@ void error (const std::string &err_msg){
     std::cout << "Error: " << err_msg << std::endl;
 }
 
-int main(int argc, char** argv) {
+
+int main(
+    // int argc, char** argv
+    ) {
+
 
     //Checking arguments that were used when running the code
-    for (int i = 0; i < argc; ++i) {
-        std::string arg = argv[i];
-        if (arg == "--verbose"|| arg == "-v") {//Check if the verbose flag was indicated
-            verbose = true; //If it was indicated, set the verbose to true
-        }
-    }
+    // for (int i = 0; i < argc; ++i) {
+    //     std::string arg = argv[i];
+    //     if (arg == "--verbose"|| arg == "-v") {//Check if the verbose flag was indicated
+    //         verbose = true; //If it was indicated, set the verbose to true
+    //     }
+    // }
 
     // Graph graph;
     Graph graph;
