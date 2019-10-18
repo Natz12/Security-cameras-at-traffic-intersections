@@ -1,5 +1,6 @@
 /** Main file */
 
+
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -13,8 +14,6 @@ bool verbose = false;
 void error (const std::string &err_msg){
     std::cout << "Error: " << err_msg << std::endl;
 }
-
-
 
 int main(int argc, char** argv) {
 
@@ -95,7 +94,6 @@ int main(int argc, char** argv) {
         } else {
             error(err_msg);
         }
-        
     }
 }
 

@@ -13,3 +13,4 @@ set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*, -fuchsia-default-arguments, -goo
 add_executable(ece650-a2 a2-ece650.cpp parse_line.cpp graph.cpp)
 
 
+

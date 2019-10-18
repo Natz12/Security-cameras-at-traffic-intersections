@@ -6,7 +6,6 @@
 #include <sstream>
 #include <vector>
 
-
 #include "a2ece650.hpp"
 
 bool verbose2 = false;
@@ -229,11 +228,9 @@ bool Graph::dijkstra( std::list<unsigned> coordinates, std::list<unsigned> &shor
                 std::cout << i << " ";
             }
         }
-        
         return (shortest_path(prev, source, target, short_path, err_msg));
-        
     }
-    err_msg = ("Missing or Bad argument for s");
+    err_msg = "Missing or Bad argument for s";
     return false;
 }
 

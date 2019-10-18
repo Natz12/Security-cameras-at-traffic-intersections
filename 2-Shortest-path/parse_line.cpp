@@ -36,14 +36,12 @@ bool parse_num (std::istringstream &input, std::list<unsigned> &nums){
     if (input.fail()) {
         // std::cout << "Error: parsing a number" << num << std::endl;
         return false;
-    } else{
-        nums.push_back(num);
-        if (verbose1) {
-            std::cout << num << std::endl;
-        }
-        return true;
+    } 
+    nums.push_back(num);
+    if (verbose1) {
+        std::cout << num << std::endl;
     }
-
+    return true;
 }
 
 bool parse_char (std::istringstream &input, char ch, char ch2 = '}'){
@@ -53,14 +51,10 @@ bool parse_char (std::istringstream &input, char ch, char ch2 = '}'){
         if (input.fail()) {
             // std::cout << "Error: parsing char" << ch << std::endl;
             return false;
-        } else {
-            if (c == ch || c == ch2){
-                return true;
-            } else {
-                return false;
-            }
-        }
-    } else { return false; }
+        } 
+        return(c == ch || c == ch2);        
+    }
+    return false;
 }
 
 bool parse_line (const std::string &line,
@@ -85,9 +79,9 @@ bool parse_line (const std::string &line,
         err_msg = "Failed to read input";
         return false;
     }
-
+    switch (ch) {
     // Command = 'V'
-    if (ch == 'V') {
+    case 'V': {
         // remove whitespace
         std::ws(input);
         unsigned num;
@@ -114,7 +108,7 @@ bool parse_line (const std::string &line,
         return true;
     }
     // Command = 'E'
-    else if (ch == 'E') {
+    case 'E': {
         // remove whitespace
         std::ws(input);
 
@@ -219,7 +213,7 @@ bool parse_line (const std::string &line,
         return true;
     }
     // Command = 's'
-    else if (ch == 's') {
+    case 's': {
         // remove whitespace
         // std::ws(input);
         unsigned num;
@@ -232,8 +226,6 @@ bool parse_line (const std::string &line,
         }
 
         nums.push_back(num);
-        
-        
 
         input >> num;
         
@@ -258,7 +250,8 @@ bool parse_line (const std::string &line,
             std::cout << std::endl;
         }
         return true;
-    } else {
+    } 
+    default:
         err_msg = "Unknown command";
         return false;
     }
@@ -273,7 +266,6 @@ bool print_short_path (std::list<unsigned> short_path) {
         } else {
             std::cout << i;
         }
-
     }
     std::cout << std::endl;
     return true;
