@@ -81,7 +81,7 @@ bool Graph::adjacency_matrix(std::string &err_msg) {
     return false;
 }
 
-bool shortest_path (std::vector<int> prev, int source, int target, std::list<unsigned> &short_path, std::string &err_msg){
+bool shortest_path (std::vector<int> prev, int source, int target, std::vector<unsigned> &short_path, std::string &err_msg){
     int u = target;
 
     if (verbose2) {
@@ -90,7 +90,7 @@ bool shortest_path (std::vector<int> prev, int source, int target, std::list<uns
     
     if (prev[u] != -1 || u == source){
         while (u != -1){
-            short_path.push_front(u);
+            short_path.push_back(u);
             u = prev[u];
         }
         if (verbose2) {
@@ -107,7 +107,7 @@ bool shortest_path (std::vector<int> prev, int source, int target, std::list<uns
     
 }
 
-bool Graph::dijkstra( std::list<unsigned> coordinates, std::list<unsigned> &short_path, std::string &err_msg){
+bool Graph::dijkstra( std::list<unsigned> coordinates, std::vector<unsigned> &short_path, std::string &err_msg){
 
     if (coordinates.size() == 2) { 
 
@@ -123,6 +123,12 @@ bool Graph::dijkstra( std::list<unsigned> coordinates, std::list<unsigned> &shor
         if (source > V || target > V) {
             err_msg = "error: vertices out of bounds";
             return false;
+        }
+
+        if (source == target) {
+            short_path.push_back(target);
+            short_path.push_back(source);
+            return true;
         }
 
         std::list<unsigned> q;

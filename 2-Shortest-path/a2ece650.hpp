@@ -22,7 +22,7 @@ public:
     /// Creates the adjacency matrix
     bool adjacency_matrix(std::string &err_msg);
     /// Calculates the shortest path
-    bool dijkstra( std::list<unsigned> coordinates, std::list<unsigned> &short_path, std::string &err_msg);
+    bool dijkstra( std::list<unsigned> coordinates, std::vector<unsigned> &short_path, std::string &err_msg);
 };
 
 /**
@@ -36,5 +36,5 @@ bool parse_line (const std::string &line,
 
 bool parse_num (std::istringstream &input, std::list<unsigned> &nums);
 
-bool print_short_path (std::list<unsigned> short_path);
+bool print_short_path (std::vector<unsigned> short_path);
 

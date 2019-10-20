@@ -42,7 +42,7 @@ int main(
         std::list<unsigned> nums;
 
         //list to store shortest path
-        std::list<unsigned> short_path;
+        std::vector<unsigned> short_path;
 
         // if nothing was read, go to top of the while to check for eof
         if (line.empty()) {

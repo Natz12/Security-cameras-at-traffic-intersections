@@ -257,16 +257,15 @@ bool parse_line (const std::string &line,
 
 }
 
-bool print_short_path (std::list<unsigned> short_path) {
+bool print_short_path (std::vector<unsigned> short_path) {
 
-    for (unsigned i : short_path){
-        if (i != short_path.back()){
-            std::cout << i << "-";
+    for (auto i = short_path.rbegin(); i != short_path.rend(); ++i){
+        if (i != short_path.rend() - 1){
+            std::cout << *i << "-";
         } else {
-            std::cout << i;
+            std::cout << *i;
         }
     }
     std::cout << std::endl;
     return true;
-
 }
