@@ -3,7 +3,8 @@
 Project for ECE 650 Methods and Tools of Software Engineering with prof Arie Gurfinkel
 
 
-## `1-Input-GraphCreation.py` is a python script to create graphs based on the intersections between streets.
+## `1-Input-GraphCreation.py`
+python script that creates graphs based on the intersections between the inputed streets.
 
 Input:
 
