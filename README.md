@@ -16,6 +16,7 @@ Input:
 - `g` causes the program to output the corresponding graph.
 
 Output:
+
 Vertices with their corresponding id and edges between vertices
 V = {
 id1: (x1,y1)
