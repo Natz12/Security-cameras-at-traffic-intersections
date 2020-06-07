@@ -19,7 +19,7 @@ Output:
 
 Vertices with their corresponding id and edges between vertices
 
-V = {
+`V = {
 id1: (x1,y1)
 id2: (x2,y2)
 id3: (x3,y3)
@@ -28,4 +28,4 @@ id3: (x3,y3)
 E = {
 <id1,id2>,
 <id2,id3>
-}
+}`
